@@ -1,5 +1,32 @@
 function x_state_k = OpenLoop_MinMax_Solution(add_usys_d,x_state,Y_x_Limit,U_x_bounds,W_x_bounds,Q,R,N,norm_type,Simul_Steps)
-
+%
+%   Syntax:
+%   x_state_k = OpenLoop_MinMax_Solution(add_usys_d,x_state,Y_x_Limit,U_x_bounds,W_x_bounds,Q,R,N,norm_type,Simul_Steps)
+%   
+%   Inputs:
+%   add_usys_d      :
+%   x_state         :
+%   Y_x_Limit       :
+%   U_x_bounds      :
+%   W_x_bounds      :
+%   Q               :
+%   R               :
+%   N               :
+%   norm_type       :
+%   Simul_Steps     :
+%
+%   Outputs:
+%   x_state_k       :
+%
+%   An open-loop Minimax solution to the problem
+%   
+%   In an open-loop fashion we try to minimze the objective function under
+%   the worst possbile assumption for the bounded uncertainty. 
+%
+%   Code based on: YALMIP Wiki (users.isy.liu.se)
+%
+%   Authors: Kostas Alexis (konstantinos.alexis@mavt.ethz.ch)
+%
 U_x = sdpvar(N,1);
 W_x = sdpvar(N,1);
 x_state = sdpvar(length(x_state),1);

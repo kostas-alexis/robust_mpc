@@ -4,7 +4,7 @@
 
 addpath('C:\Users\Kostas\Documents\MATLAB\Control\MPT3\')
 addpath('C:\Users\Kostas\Documents\MATLAB\Control\Robust MPC\')
-
+addpath(genpath('C:\Users\Kostas\Documents\GitHub\Robust_mpc\'))
 %%  Step 1: Assume some second order closed loop attitude dynamics
 disp('### Define the Attitude Subsystem Closed-Loop Dynamics');
 
@@ -85,6 +85,8 @@ norm_type = 1;
 W_x_bounds = [-0.5 0.5];
 Y_x_Limit = 1;
 U_x_bounds = [-10 10];
+x_state = sdpvar(4,1);
+N = 5; 
 
 Q = 10;
 R = 0.1;
@@ -121,7 +123,13 @@ Q = 10;
 R = 0.1;
 
 sol_x_mp = Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,x_state,Y_x_Limit,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
-
+%%
+Simul_Steps = 5;
+[x_state_k,sol_x_mp] = Multiparametric_Approximate_ClosedLoop_MinMax_Simul(add_usys_d,x_state,Y_x_Limit,U_x_bounds,W_x_bounds,Q,R,N,norm_type,Simul_Steps)
+%%
+hold on
+%plot(sys_x_d.C*x_state_k,'r')
+plot(x_state_k(2,1:end),'r')
 %%  Dynamic Programming Exact Solution
 
 norm_type = 1;
