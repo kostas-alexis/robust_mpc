@@ -81,20 +81,16 @@ sys_z_d = c2d(sys_z,Ts,'zoh');
 E_x = 0.1*B_x;
 add_usys_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
 
-%AA = [0 1; 0 -0.01]; BB = [0; 0.6]; CC = eye(2); DD = zeros(2,1); EE = .5*BB;
-%add_usys_d = add_uss(AA,BB,CC,DD,EE,Ts);
-[y,t] = step_addusys(add_usys_d,[-0.5 0.5])
-%%
 time_vec = 0:0.01:100;
-u_inp = ones(length(time_vec),1);
-[y,t] = lsim_addusys(add_usys_d,[-0.5 0.5],u_inp,time_vec);
+u_inp = 10*sin(time_vec);
+[y,t] = lsim_addusys(add_usys_d,[-0.5 0.5],u,t);
 %%  Open-Loop MinMax Solution
 norm_type = 1;
 W_x_bounds = [-0.5 0.5];
 N = 5; 
 
 Y_x_Limit = 1;
-Y_x_Limit = 1*ones(min(size(add_usys_d.matrices.C))*N,1);
+% Y_x_Limit = 1*ones(min(size(add_usys_d.matrices.C))*N,1);
 U_x_bounds = [-10 10];
 x_state = sdpvar(length(add_usys_d.matrices.A),1);
 
@@ -112,7 +108,7 @@ plot(x_state_k(2,1:end))
 norm_type = 1;
 W_x_bounds = [-0.5 0.5];
 Y_x_Limit = 1;
-Y_x_Limit = 1*ones(min(size(add_usys_d.matrices.C))*N,1);
+% Y_x_Limit = 1*ones(min(size(add_usys_d.matrices.C))*N,1);
 
 U_x_bounds = [-100 100];
 
@@ -121,7 +117,6 @@ R = 0.1;
 
 x_state_k = Approximate_ClosedLoop_MinMax_Solution(add_usys_d,x_state,Y_x_Limit,U_x_bounds,W_x_bounds,Q,R,N,norm_type,Simul_Steps)
 hold on
-%plot(sys_x_d.C*x_state_k,'r')
 plot(x_state_k(2,1:end),'r')
 
 %%  MultiParametric Approximate Closed Loop MinMax Solution
@@ -129,7 +124,7 @@ plot(x_state_k(2,1:end),'r')
 norm_type = 1;
 W_x_bounds = [-0.5 0.5];
 Y_x_Limit = 1;
-Y_x_Limit = 1*ones(min(size(add_usys_d.matrices.C))*N,1);
+% Y_x_Limit = 1*ones(min(size(add_usys_d.matrices.C))*N,1);
 
 U_x_bounds = [-100 100];
 
@@ -137,41 +132,25 @@ Q = 10;
 R = 0.1;
 
 run Multiparametric_Approximate_ClosedLoop_MinMax_Script
-%%
-assign(x_state,[0.9 0.0]')
-bb = double(Optimizer_x)
-%%
+
+beep 
+
+flag_sim = input('Show Simulation? [0/1]');
+if(flag_sim == 1)
+    x_state_init = zeros(length(x_state),1);
+    time_sec = 10; % 10 secs
+    time_sec = input('how long [s]?');
+    [y,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec)
+end
+
+%%  Alternative Methods and plots
 assign(x_state,[-0.09 -0.0 -.01 -0.05]')
-bb = double(Optimizer_x)
-%%
-
-sol_x_mp = Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,x_state,Y_x_Limit,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
-%%
-Simul_Steps = 1;
-[x_state_k,sol_x_mp,diagnostics_x,aux_x,ValueFunction_x,Optimizer_x] = Multiparametric_Approximate_ClosedLoop_MinMax_Simul(add_usys_d,x_state,Y_x_Limit,U_x_bounds,W_x_bounds,Q,R,N,norm_type,Simul_Steps)
-
-%%
-clc
-assign(x_state,[10; 0;]);
-bb = double(Optimizer_x)
-length(bb)
-%%
-assign(x_state,[0; 1; 0; 1])
 double(Optimizer_x)
-%%
-plot(ValueFunction_x)
-%%
 
-% plot(ValueFunction_x);
-% figure
+plot(ValueFunction_x)
+figure
 plot(Optimizer_x(1));
 
-
-
-%%
-hold on
-%plot(sys_x_d.C*x_state_k,'r')
-plot(x_state_k(2,1:end),'r')
 %%  Dynamic Programming Exact Solution
 
 norm_type = 1;

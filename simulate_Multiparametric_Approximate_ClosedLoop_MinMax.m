@@ -22,4 +22,15 @@ for i = 1:length(time_sec)
     y(i,:) = double(x_state_k);
 end
 
+close all;
+num_outs = min(size(add_usys_d.matrices.C);
+
+for i = 1:num_outs
+    figure(i)
+    plot(t,y(:,1)); grid on;
+    xlabel('Time (s)'); ylabel(['y(' num2str(i) ')']);
+end
+
+end
+
 end
