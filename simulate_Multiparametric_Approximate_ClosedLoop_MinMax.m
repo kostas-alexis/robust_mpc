@@ -12,25 +12,34 @@ function [y,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys
 %   y               : output
 %   
 
-t = 0:Ts:time_sec;
+t = 0:add_usys_d.Ts:time_sec;
 x_state_k = x_state_init;
 
+if(isrow(x_state_init))
+    y(1,:) = x_state_init;
+else
+    y(1,:) = x_state_init';
+end
+u_ctrl = 0;
+u_ctrl_prev = u_ctrl;
 ops = sdpsettings;
-for i = 1:length(time_sec)
-    u_ctrl = robustmpc_getInput(sol_x_mp, x_state_k);
+for i = 1:length(t)
+    [u_ctrl,sol_found] = robustmpc_getInput(sol_x_mp, y(i,:)');
+    if(sol_found == 0)
+        u_ctrl = u_ctrl_prev;
+    end
     x_state_k = [x_state_k add_usys_d.matrices.A*x_state_k(:,end) + add_usys_d.matrices.B*double(u_ctrl) + add_usys_d.matrices.E*(-1+2*rand(1))];
-    y(i,:) = double(x_state_k);
+    y(i+1,:) = double(x_state_k(:,i+1));
+    u_ctrl_prev = u_ctrl;
 end
 
 close all;
-num_outs = min(size(add_usys_d.matrices.C);
+num_outs = min(size(add_usys_d.matrices.C));
 
 for i = 1:num_outs
     figure(i)
-    plot(t,y(:,1)); grid on;
+    plot(t,y(1:(end-1),i)); grid on;
     xlabel('Time (s)'); ylabel(['y(' num2str(i) ')']);
-end
-
 end
 
 end

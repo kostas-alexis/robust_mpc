@@ -41,6 +41,7 @@ objective_x = norm(Y_x-1,norm_type)*Q + norm(U_x,norm_type)*R;
 G_x = [W_x_bounds(1) <= W_x <= W_x_bounds(2)];
 
 [Frobust_x,h_x] = robustify(F_x + G_x, objective_x, [], W_x);
+%[sol_x_mp,diagnostics_x,aux_x,ValueFunction_x,Optimizer_x] = solvemp(Frobust_x,h_x,[],x_state);
 [sol_x_mp,diagnostics_x,aux_x,ValueFunction_x,Optimizer_x] = solvemp(Frobust_x,h_x,[],x_state,U_x(1));
 
 disp('### Multiparametric Robust MPC computed');

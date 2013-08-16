@@ -51,9 +51,9 @@ if(num_out == 3)
     grid on;
     xlabel('Time (s)'); ylabel(['y(' num2str(1) ')']);
     subplot(3,1,2)
-    plot(time_vec,y_nom(:,2),'b'); hold on;
-    plot(time_vec,y_nom(:,2)+y_add_max(:,2),'r');
-    plot(time_vec,y_nom(:,2)+y_add_min(:,2),'k'); 
+    plot(t,y_nom(:,2),'b'); hold on;
+    plot(t,y_nom(:,2)+y_add_max(:,2),'r');
+    plot(t,y_nom(:,2)+y_add_min(:,2),'k'); 
     grid on;
     xlabel('Time (s)'); ylabel(['y(' num2str(2) ')']);
     subplot(3,1,3)
