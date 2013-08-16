@@ -51,7 +51,7 @@ G_x = [W_x_bounds(1) <= W_x <= W_x_bounds(2)];
 ops = sdpsettings;
 
 controller_x = optimizer([F_x, G_x, uncertain(W_x)],objective_x,ops,x_state,U_x(1));
-x_state_k = [0;0;0;0;];
+x_state_k = zeros(length(x_state),1); %[0;0;0;0;];
 for i = 1:Simul_Steps
     x_state_k = [x_state_k add_usys_d.matrices.A*x_state_k(:,end) + add_usys_d.matrices.B*controller_x{x_state_k(:,end)} + add_usys_d.matrices.E*(-1+2*rand(1))];
 end

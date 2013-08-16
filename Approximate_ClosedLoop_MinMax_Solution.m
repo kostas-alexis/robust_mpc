@@ -52,7 +52,7 @@ G_x = [W_x_bounds(1) <= W_x <= W_x_bounds(2)];
 
 [Frobust_x,h_x] = robustify(F_x + G_x,objective_x,[],W_x);
 %%
-x_state_k = [0;0;0;0;];
+x_state_k = zeros(length(x_state),1);
 
 ops = sdpsettings;
 for i = 1:Simul_Steps
