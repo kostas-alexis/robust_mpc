@@ -1,1 +1,6 @@
-1. Fix MultiParametric 1-step solution and complete simulation.
+---------------
+
+- Test with specific rotorcraft
+- Work on faster realizations
+- Test real-time functionality of the evaluation functions
+

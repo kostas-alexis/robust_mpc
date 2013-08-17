@@ -11,7 +11,7 @@ run example_rotorcraft_model
 E_x = 0.1*B_x;
 E_z = 0.1*B_z;
 add_usys_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
-%add_usys_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
+add_usys_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -60,7 +60,6 @@ W_x_bounds = [-0.5 0.5];
 N = 2; 
 
 Y_x_Limit_orig = [Inf 1 pi 2*pi];
-% Y_x_Limit_orig = [Inf 1 1];
 Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N)
 
 U_x_bounds = [-100 100];
