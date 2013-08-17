@@ -76,7 +76,7 @@ R = 0.1;
 run Multiparametric_Approximate_ClosedLoop_MinMax_Script
 
 beep 
-%%
+
 flag_sim = input('Show Simulation? [0/1]');
 if(flag_sim == 1)
     x_state_init = zeros(length(x_state),1);
@@ -88,11 +88,14 @@ end
 x_bounds_min = -[1 1 1 1];
 x_bounds_max =  [1 1 1 1];
 desired_samples_per_state = 2;
-sol_x_mp_rt = assembly_sol_x_mp_RealTime(sol_x_mp,x_bounds_min,x_bounds_max,desired_samples_per_state)
+sol_x_mp_rt = assembly_sol_x_mp_RealTime(sol_x_mp,x_bounds_min,x_bounds_max,desired_samples_per_state);
+
 %%  Alternative Methods and plots
+
 assign(x_state,[1 0 1 1]')
 double(Optimizer_x)
 %%
+
 plot(ValueFunction_x)
 figure
 plot(Optimizer_x(1));
