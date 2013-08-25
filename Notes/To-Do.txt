@@ -1,6 +1,8 @@
 ---------------
 
-- Test with specific rotorcraft
+- introduce "Terminal Set Constraint"
+- introduce Punsafe/Psafe polytopic constraints
+- Test with family of rotorcrafts
 - Work on faster realizations
 - Test real-time functionality of the evaluation functions
 
