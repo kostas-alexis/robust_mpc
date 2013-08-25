@@ -6,3 +6,7 @@
 - Work on faster realizations
 - Test real-time functionality of the evaluation functions
 
+
+---- Notes on solvers:
+
+- tested with gurobi...
