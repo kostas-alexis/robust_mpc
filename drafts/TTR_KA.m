@@ -1,10 +1,4 @@
-%%  Rotorcraft Parameters
-%
-%   This is just a test-file
-%
-%   Authors: Kostas Alexis (konstantinos.alexis@mavt.ethz.ch)
-
-%%  Step 1: Define TTR-parameters
+%% Subsystem Dynamics
 
 % Rotor Dynamics
 hr=tf(7.655946120461085,[0.145992771705270 1]);   hr.OutputDelay=0.03388;
@@ -23,9 +17,13 @@ ss_S.InputDelay = 0.02;
 %Old
 PHI = tf(1.119,[0.0355 0.1663 1]);   PHI.InputDelay=0.04;
 %New
-PHI = tf(0.99749,[0.21585 1]);   PHI.InputDelay=0.15517;
+%PHI = tf(0.99749,[0.21585 1]);   PHI.InputDelay=0.15517;
 %ss
 ss_PHI = idss(PHI,'SSParameterization','Canonical');
+
+%% Fixed Parameters
+
+Ts_slow = 0.250;
 
 %Mechanical Setup
 m_B = 2.35;
@@ -37,6 +35,7 @@ dmp_x = 0.1;
 dmp_y = 0.1;
 dmp_z = 0.1;
 
+%%
 % X = [x;x_dot;delta_g]
 
 g_0 = 0;
@@ -54,7 +53,10 @@ C = eye(3);
 D = zeros(3,1);
 
 TTR_X=ss(A,B,C,D);
+TTR_X.InputDelay(1) = ss_S.InputDelay;
+TTR_X_d=c2d(TTR_X,Ts_slow,'zoh');
 
+%%
 % Z = [z;z_dot;delta_F]
 
 g_0 = 0;
@@ -72,8 +74,34 @@ C = eye(3);
 D = zeros(3,1);
 
 TTR_Z=ss(A,B,C,D);
+TTR_Z.InputDelay(1) = ss_RL.InputDelay;
+TTR_Z_d=c2d(TTR_Z,Ts_slow,'zoh');
 
+%%
 % Y = [y;y_dot;phi]  OLD
+
+g_0 = 0;
+F_0 = ( (m_B*g)/(1+(d_RL_x/d_T_x)) )/cos(g_0);
+
+A = [0  1       0                   0;
+     0  -dmp_y  (cos(g_0)*F_0)/m_B  0;
+     0  0       ss_PHI.A(1,1)       ss_PHI.A(1,2);
+     0  0       ss_PHI.A(2,1)       ss_PHI.A(2,2)];
+
+B = [0;
+     0;
+     ss_PHI.B(1,1);
+     ss_PHI.B(2,1)];
+
+C = eye(4);
+D = zeros(4,1);
+
+TTR_Y=ss(A,B,C,D);
+TTR_Y.InputDelay(1) = ss_PHI.InputDelay;
+TTR_Y_d=c2d(TTR_Y,Ts_slow,'zoh');
+
+%%
+% Y = [y;y_dot;phi]  NEW
 
 g_0 = 0;
 F_0 = ( (m_B*g)/(1+(d_RL_x/d_T_x)) )/cos(g_0);
@@ -88,19 +116,7 @@ B = [0;
 
 C = eye(3);
 D = zeros(3,1);
+
 TTR_Y=ss(A,B,C,D);
-
-sys_x = TTR_X;
-sys_y = TTR_Y;
-sys_z = TTR_Z;
-A_x = sys_x.A; B_x = sys_x.B; C_x = sys_x.C; D_x = sys_x.D;
-A_y = sys_y.A; B_y = sys_y.B; C_y = sys_y.C; D_y = sys_y.D;
-A_z = sys_z.A; B_z = sys_z.B; C_z = sys_z.C; D_z = sys_z.D;
-
-
-%%  Discretize
-disp('### Discretize')
-
-sys_x_d = c2d(sys_x,Ts,'zoh');
-sys_y_d = c2d(sys_y,Ts,'zoh');
-sys_z_d = c2d(sys_z,Ts,'zoh');
+TTR_Y.InputDelay(1) = ss_PHI.InputDelay;
+TTR_Y_d=c2d(TTR_Y,Ts_slow,'zoh');

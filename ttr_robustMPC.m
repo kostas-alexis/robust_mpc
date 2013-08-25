@@ -10,9 +10,14 @@ run example_ttr_model
 
 %%  Define Additive Uncertain Model
 E_x = 0.1*B_x;
-add_usys_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
+E_y = 0.1*B_y;
+E_z = 0.1*B_z;
 
 add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
+add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
+add_usys_z_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
+
+add_usys_d = add_usys_z_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -58,22 +63,28 @@ plot(x_state_k(2,1:end),'r')
 x_state = sdpvar(length(add_usys_d.matrices.A),1);
 norm_type = 1;
 W_x_bounds = [-0.5 0.5];
-N = 4; 
+N = 3; 
 
 %Y_x_Limit_orig = [Inf 1 pi/4 pi];
-Y_x_Limit_orig = [Inf 1];
+Y_x_Limit_orig = [Inf 1 deg2rad(15)];
 
 % Y_x_Limit_orig = [Inf 1 1];
 Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N)
 
-U_x_bounds = [-deg2rad(10) deg2rad(10)];
+U_x_bounds = [-deg2rad(10) deg2rad(10)]; % x_controller
+U_x_bounds = [-deg2rad(10) deg2rad(10)]; % y_controller
+U_x_bounds = [-5 5]; % z_controller
 
 % Q = diag([100 .01 .01 .01]);
 % R = 0.001;
-Q = diag([25 .5]);
-R = .15;
+Q = diag([25 .5 .1]); % x_controller
+Q = diag([10 .2 .1]); % y_controller
+Q = diag([15 1.8 .55]); % z_controller
 
-Y_ref = [0 0]';
+R = .15; % x_controller
+R = .15; % y_controller
+R = .125; % z_controller
+Y_ref = [0 0 0]';
 
 %
 run Multiparametric_Approximate_ClosedLoop_MinMax_Script_vW1
@@ -82,7 +93,7 @@ beep
 %%
 flag_sim = input('Show Simulation? [0/1]');
 if(flag_sim == 1)
-    x_state_init = zeros(length(x_state),1); x_state_init = [2 0]';
+    x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0]';
     time_sec = 10; % 10 secs
     time_sec = input('how long [s]?');
     [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,Optimizer_x,x_state);

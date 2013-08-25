@@ -12,10 +12,10 @@ run example_hquad_model
 E_x = 0.1*B_x;
 E_y = 0.1*B_y;
 
-add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
-add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
+add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts);
+add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts);
 
-add_usys_d = add_usys_x_d;
+add_usys_d = add_usys_y_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -72,8 +72,11 @@ U_x_bounds = [-deg2rad(10) deg2rad(10)];
 %U_x_bounds = [-10 10];
 
 
-Q = diag([10 .05 .01 .01]);
-R = 0.001;
+Q = diag([10 .05 .01 .01]); % for x_controller
+R = 0.001;                  % for x_controller
+
+Q = diag([10 .5 .01 .01]); % for y_controller
+R = 0.001;                  % for y_controller
 
 Y_ref = [0 0 0 0]';
 

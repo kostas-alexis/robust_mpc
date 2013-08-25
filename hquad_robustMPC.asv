@@ -10,13 +10,16 @@ run example_hquad_model
 
 %%  Define Additive Uncertain Model
 E_x = 0.1*B_x;
-add_usys_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
+E_y = 0.1*B_y;
 
-add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
+add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts);
+add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts);
+
+add_usys_d = add_usys_y_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
-[y,t] = lsim_addusys(add_usys_d,[-0.05 0.05],u,t);
+[y,t] = lsim_addusys(add_usys_d,[-0.5 0.5],u,t);
 
 %%  Open-Loop MinMax Solution
 norm_type = 1;
@@ -58,7 +61,7 @@ plot(x_state_k(2,1:end),'r')
 x_state = sdpvar(length(add_usys_d.matrices.A),1);
 norm_type = 1;
 W_x_bounds = [-0.1 0.1];
-N =3; 
+N =2; 
 
 Y_x_Limit_orig = [Inf 1 pi/4 pi];
 %Y_x_Limit_orig = [Inf Inf Inf Inf];
@@ -69,8 +72,11 @@ U_x_bounds = [-deg2rad(10) deg2rad(10)];
 %U_x_bounds = [-10 10];
 
 
-Q = diag([10 .05 .01 .01]);
-R = 0.001;
+Q = diag([10 .05 .01 .01]); % for x_controller
+R = 0.001;                  % for x_controller
+
+Q = diag([10 .5 .01 .01]); % for y_controller
+R = 0.001;                  % for y_controller
 
 Y_ref = [0 0 0 0]';
 
