@@ -12,12 +12,13 @@ run example_ttr_model
 E_x = 0.1*B_x;
 E_y = 0.1*B_y;
 E_z = 0.1*B_z;
+E_x = [0 1 0]'; E_y = [0 1 0]';B_z = [0 .3 0]';
 
 add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
 add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
 add_usys_z_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
 
-add_usys_d = add_usys_z_d;
+add_usys_d = add_usys_x_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -69,7 +70,7 @@ N = 3;
 Y_x_Limit_orig = [Inf 1 deg2rad(15)];
 
 % Y_x_Limit_orig = [Inf 1 1];
-Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N)
+%Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N)
 
 U_x_bounds = [-deg2rad(10) deg2rad(10)]; % x_controller
 U_x_bounds = [-deg2rad(10) deg2rad(10)]; % y_controller
@@ -78,18 +79,16 @@ U_x_bounds = [-5 5]; % z_controller
 % Q = diag([100 .01 .01 .01]);
 % R = 0.001;
 Q = diag([25 .5 .1]); % x_controller
-Q = diag([10 .2 .1]); % y_controller
-Q = diag([15 1.8 .55]); % z_controller
+%Q = diag([10 .2 .1]); % y_controller
+%Q = diag([15 1.8 .55]); % z_controller
 
 R = .15; % x_controller
-R = .15; % y_controller
-R = .125; % z_controller
+%R = .15; % y_controller
+%R = .125; % z_controller
 Y_ref = [0 0 0]';
 
-%
-run Multiparametric_Approximate_ClosedLoop_MinMax_Script_vW1
+[sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
 
-beep 
 %%
 flag_sim = input('Show Simulation? [0/1]');
 if(flag_sim == 1)
@@ -98,6 +97,25 @@ if(flag_sim == 1)
     time_sec = input('how long [s]?');
     [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,Optimizer_x,x_state);
 end
+%%  Export Real-Time Controller
+
+[H,K,F,G,Nc] = GetRobustMPC_Matrices(sol_x_mp{1});
+%%
+Nx = length(add_usys_d.matrices.A);
+xx = [.03 0.05 0.3]';
+assign(x_state,xx);
+[U,flag_oob] =  OptimalMPCInput(xx,H,K,F,G,N,N)
+assign(x_state,xx);
+double(Optimizer)
+%%
+
+
+sol_x_mp{1}.Ai = cell(1,length(sol_x_mp{1}.Ai));
+sol_x_mp{1}.Bi = sol_x_mp{1}.Fi;
+sol_x_mp{1}.Ci = sol_x_mp{1}.Gi;
+Optimizer = pwf(sol_x_mp{1},x_state,'general')
+
+
 %%
 x_bounds_min = -[1 1 1 1];
 x_bounds_max =  [1 1 1 1];
