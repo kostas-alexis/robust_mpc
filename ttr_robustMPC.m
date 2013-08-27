@@ -89,7 +89,7 @@ Y_ref = [0 0 0]';
 
 [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
 
-%%
+%%  Simulate in time
 flag_sim = input('Show Simulation? [0/1]');
 if(flag_sim == 1)
     x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0]';
@@ -97,50 +97,22 @@ if(flag_sim == 1)
     time_sec = input('how long [s]?');
     [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,Optimizer_x,x_state);
 end
-%%  Export Real-Time Controller
+%%  Export and Test Real-Time Controller
 
-[H,K,F,G,Nc] = GetRobustMPC_Matrices(sol_x_mp{1});
-%%
-Nx = length(add_usys_d.matrices.A);
-xx = [.03 0.05 0.3]';
-assign(x_state,xx);
-[U,flag_oob] =  OptimalMPCInput(xx,H,K,F,G,N,N)
-assign(x_state,xx);
-double(Optimizer)
-%%
-
-
+%   1. validator:
 sol_x_mp{1}.Ai = cell(1,length(sol_x_mp{1}.Ai));
 sol_x_mp{1}.Bi = sol_x_mp{1}.Fi;
 sol_x_mp{1}.Ci = sol_x_mp{1}.Gi;
 Optimizer = pwf(sol_x_mp{1},x_state,'general')
 
+%   derive the matrices for real-time execution
+[H,K,F,G,Nc] = GetRobustMPC_Matrices(sol_x_mp{1});
+Nx = length(add_usys_d.matrices.A);
 
-%%
-x_bounds_min = -[1 1 1 1];
-x_bounds_max =  [1 1 1 1];
-desired_samples_per_state = 2;
-sol_x_mp_rt = assembly_sol_x_mp_RealTime(sol_x_mp,x_bounds_min,x_bounds_max,desired_samples_per_state);
-
-%%  Alternative Methods and plots
-
-assign(x_state,[1 0 1 1]')
-double(Optimizer_x)
-%%
-
-plot(ValueFunction_x)
-figure
-plot(Optimizer_x(1));
-
-%%  Dynamic Programming Exact Solution
-
-norm_type = 1;
-W_x_bounds = [-0.5 0.5];
-Y_x_Limit_orig = [Inf 1 pi 2*pi];
-Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N);
-U_x_bounds = [-100 100];
-
-X_expl_bounds = [-100 100];
-
-sol_x = DP_Exact_ClosedLoop_MinMax(add_usys_d,x_state,Y_x_Limit,U_x_bounds,X_expl_bounds,W_x_bounds,Q,R,N,norm_type)
+%   validate
+xx = [.03 0.05 0.3]';
+assign(x_state,xx);
+[U,flag_oob] =  OptimalMPCInput(xx,H,K,F,G,N,Nx)
+assign(x_state,xx);
+double(Optimizer)
 

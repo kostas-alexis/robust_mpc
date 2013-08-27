@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.2"
+    ComputedModelVersion    "1.6"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -39,7 +39,7 @@ Model {
 	DockPosition		"Left"
 	Width			[50]
 	Height			[50]
-	Filter			[12]
+	Filter			[13]
       }
       Object {
 	$PropName		"ExplorerBarInfo"
@@ -66,9 +66,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "Kostas"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Aug 27 01:29:47 2013"
-  RTWModifiedTimeStamp	  299467357
-  ModelVersionFormat	  "1.%<AutoIncrement:2>"
+  LastModifiedDate	  "Tue Aug 27 02:15:32 2013"
+  RTWModifiedTimeStamp	  299470523
+  ModelVersionFormat	  "1.%<AutoIncrement:6>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -106,7 +106,7 @@ Model {
     $ObjectID		    6
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "OptimalMPCInput_mdl"
-    overrideMode_	    [0U]
+    overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
@@ -870,7 +870,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "9"
+    SIDHighWatermark	    "10"
     Block {
       BlockType		      Constant
       Name		      "Constant"
@@ -920,7 +920,7 @@ Model {
       BlockType		      Constant
       Name		      "Constant5"
       SID		      "7"
-      Position		      [75, 500, 105, 530]
+      Position		      [75, 570, 105, 600]
       ZOrder		      7
       ShowName		      off
       Value		      "Nx"
@@ -933,6 +933,15 @@ Model {
       ZOrder		      8
       ShowName		      off
       Value		      "xx"
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant7"
+      SID		      "10"
+      Position		      [75, 500, 105, 530]
+      ZOrder		      10
+      ShowName		      off
+      Value		      "zeros(100,Nx)"
     }
     Block {
       BlockType		      Display
@@ -948,8 +957,8 @@ Model {
       BlockType		      SubSystem
       Name		      "MATLAB Function"
       SID		      "1"
-      Ports		      [7, 2]
-      Position		      [190, 65, 425, 545]
+      Ports		      [8, 2]
+      Position		      [190, 67, 435, 613]
       ZOrder		      1
       LibraryVersion	      "1.32"
       ErrorFcn		      "Stateflow.Translate.translate"
@@ -978,7 +987,7 @@ Model {
 	TiledPageScale		1
 	ShowPageBoundaries	off
 	ZoomFactor		"100"
-	SIDHighWatermark	"27"
+	SIDHighWatermark	"28"
 	Block {
 	  BlockType		  Inport
 	  Name			  "X"
@@ -1034,11 +1043,20 @@ Model {
 	}
 	Block {
 	  BlockType		  Inport
+	  Name			  "Hi_init"
+	  SID			  "1::28"
+	  Position		  [20, 316, 40, 334]
+	  ZOrder		  14
+	  Port			  "7"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Inport
 	  Name			  "Nx"
 	  SID			  "1::26"
-	  Position		  [20, 316, 40, 334]
+	  Position		  [20, 351, 40, 369]
 	  ZOrder		  12
-	  Port			  "7"
+	  Port			  "8"
 	  IconDisplay		  "Port number"
 	}
 	Block {
@@ -1055,11 +1073,11 @@ Model {
 	  Name			  " SFunction "
 	  SID			  "1::18"
 	  Tag			  "Stateflow S-Function OptimalMPCInput_mdl 2"
-	  Ports			  [7, 3]
-	  Position		  [180, 110, 230, 270]
+	  Ports			  [8, 3]
+	  Position		  [180, 110, 230, 290]
 	  ZOrder		  4
 	  FunctionName		  "sf_sfun"
-	  PortCounts		  "[7 3]"
+	  PortCounts		  "[8 3]"
 	  EnableBusSupport	  on
 	  Port {
 	    PortNumber		    2
@@ -1135,10 +1153,16 @@ Model {
 	  DstPort		  6
 	}
 	Line {
-	  SrcBlock		  "Nx"
+	  SrcBlock		  "Hi_init"
 	  SrcPort		  1
 	  DstBlock		  " SFunction "
 	  DstPort		  7
+	}
+	Line {
+	  SrcBlock		  "Nx"
+	  SrcPort		  1
+	  DstBlock		  " SFunction "
+	  DstPort		  8
 	}
 	Line {
 	  Name			  "U"
@@ -1173,30 +1197,35 @@ Model {
     Line {
       SrcBlock		      "Constant"
       SrcPort		      1
+      Points		      [65, 0]
       DstBlock		      "MATLAB Function"
       DstPort		      2
     }
     Line {
       SrcBlock		      "Constant1"
       SrcPort		      1
+      Points		      [65, 0]
       DstBlock		      "MATLAB Function"
       DstPort		      3
     }
     Line {
       SrcBlock		      "Constant2"
       SrcPort		      1
+      Points		      [65, 0]
       DstBlock		      "MATLAB Function"
       DstPort		      4
     }
     Line {
       SrcBlock		      "Constant3"
       SrcPort		      1
+      Points		      [65, 0]
       DstBlock		      "MATLAB Function"
       DstPort		      5
     }
     Line {
       SrcBlock		      "Constant4"
       SrcPort		      1
+      Points		      [65, 0]
       DstBlock		      "MATLAB Function"
       DstPort		      6
     }
@@ -1204,7 +1233,7 @@ Model {
       SrcBlock		      "Constant5"
       SrcPort		      1
       DstBlock		      "MATLAB Function"
-      DstPort		      7
+      DstPort		      8
     }
     Line {
       SrcBlock		      "Constant6"
@@ -1215,8 +1244,15 @@ Model {
     Line {
       SrcBlock		      "MATLAB Function"
       SrcPort		      1
+      Points		      [55, 0; 0, -20]
       DstBlock		      "Display"
       DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Constant7"
+      SrcPort		      1
+      DstBlock		      "MATLAB Function"
+      DstPort		      7
     }
   }
 }
@@ -1232,7 +1268,7 @@ Stateflow {
     name		    "OptimalMPCInput_mdl"
     created		    "27-Aug-2013 01:18:49"
     isLibrary		    0
-    firstTarget		    16
+    firstTarget		    17
     sfVersion		    76014001.0015
   }
   chart {
@@ -1242,14 +1278,14 @@ Stateflow {
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 1280 1024 1.041050272174191]
     treeNode		    [0 3 0 0]
-    firstTransition	    14
-    firstJunction	    13
+    firstTransition	    15
+    firstJunction	    14
     viewObj		    2
     visible		    1
     machine		    1
     subviewS {
     }
-    ssIdHighWaterMark	    12
+    ssIdHighWaterMark	    13
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    4
@@ -1273,18 +1309,18 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function[U,flag_oob] = OptimalMPCInput_mdl(X,Hn,Kn,Fi,Gi,Nc,Nx)\n%#codegen\n\ntolerance = 1;\nnr "
-      " = size(Nc,1);\nMPT_ABSTOL = 1e-8;\nminreg = 0;\nX = round(10000*X)/10000;\n\nflag_oob = 0;\n%maxSize = max(Nc);"
-      "\n\nHi = zeros(1000,Nx);\nKi = zeros(1000,1);\n\n% Find the proper region\nabspos = 1;\nfor ireg = 1:nr\n    sum"
-      "Viol = 0;\n    isinside = 1;\n    \n\n  %  Hi(1:Nc(ireg),1:4) = Hn(abspos:(abspos+Nc(ireg)-1),1:4);\n    for i ="
-      " 1:Nc(ireg)\n        for j = 1:Nx\n            Hi(i,j) = Hn(abspos + i - 1,j);\n        end\n    end\n    \n%   "
-      " Ki(1:Nc(ireg),1) = Kn(abspos:(abspos+Nc(ireg)-1),1);\n    for i = 1:Nc(ireg)\n        Ki(i,1) = Kn(abspos + i -"
-      " 1,1);\n    end\n    abspos = abspos + Nc(ireg);\n    \n    F = Fi(ireg,:);\n    G = Gi(ireg,:);\n    \n    nc ="
-      " Nc(ireg);\n    \n    for ic = 1:nc\n        hx = Hi(ic,:)*X;\n        if ((hx - Ki(ic)) > MPT_ABSTOL)\n        "
-      "    isinside = 0;\n            sumViol = sumViol + (hx - Ki(ic));\n        end\n    end\n    \n    if (sumViol <"
-      " tolerance)\n        tolerance = sumViol;\n        minreg = ireg;\n    end\n    % extract the right control law\n"
-      "    if (isinside == 1)\n        U = F*X + G;\n        return\n    end\nend\nF = Fi(minreg,:);\nG = Gi(minreg,:);"
-      "\nU = F*X + G;\nflag_oob = 1;\nreturn\n    "
+      script		      "function[U,flag_oob] = OptimalMPCInput_mdl(X,Hn,Kn,Fi,Gi,Nc,Hi_init,Nx)\n%#codegen\n\ntolerance ="
+      " 1;\nnr  = size(Nc,1);\nMPT_ABSTOL = 1e-8;\nminreg = 0;\nX = round(10000*X)/10000;\n\nflag_oob = 0;\n%maxSize = "
+      "max(Nc);\n\n%Hi = zeros(100,3);\nHi = Hi_init;\n\nKi = zeros(1000,1);\n\n% Find the proper region\nabspos = 1;\n"
+      "for ireg = 1:nr\n    sumViol = 0;\n    isinside = 1;\n    \n\n  %  Hi(1:Nc(ireg),1:4) = Hn(abspos:(abspos+Nc(ire"
+      "g)-1),1:4);\n    for i = 1:Nc(ireg)\n        for j = 1:Nx\n            Hi(i,j) = Hn(abspos + i - 1,j);\n        "
+      "end\n    end\n    \n%    Ki(1:Nc(ireg),1) = Kn(abspos:(abspos+Nc(ireg)-1),1);\n    for i = 1:Nc(ireg)\n        K"
+      "i(i,1) = Kn(abspos + i - 1,1);\n    end\n    abspos = abspos + Nc(ireg);\n    \n    F = Fi(ireg,:);\n    G = Gi("
+      "ireg,:);\n    \n    nc = Nc(ireg);\n    \n    for ic = 1:nc\n        hx = Hi(ic,:)*X;\n        if ((hx - Ki(ic))"
+      " > MPT_ABSTOL)\n            isinside = 0;\n            sumViol = sumViol + (hx - Ki(ic));\n        end\n    end\n"
+      "    \n    if (sumViol < tolerance)\n        tolerance = sumViol;\n        minreg = ireg;\n    end\n    % extract"
+      " the right control law\n    if (isinside == 1)\n        U = F*X + G;\n        return\n    end\nend\nF = Fi(minre"
+      "g,:);\nG = Gi(minreg,:);\nU = F*X + G;\nflag_oob = 1;\nreturn\n    "
       editorLayout	      "100 M4x1[10 5 700 500]"
     }
   }
@@ -1439,8 +1475,8 @@ Stateflow {
   }
   data {
     id			    11
-    ssIdNumber		    11
-    name		    "Nx"
+    ssIdNumber		    13
+    name		    "Hi_init"
     linkNode		    [2 10 12]
     scope		    INPUT_DATA
     machine		    1
@@ -1461,9 +1497,31 @@ Stateflow {
   }
   data {
     id			    12
+    ssIdNumber		    11
+    name		    "Nx"
+    linkNode		    [2 11 13]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    13
     ssIdNumber		    12
     name		    "flag_oob"
-    linkNode		    [2 11 0]
+    linkNode		    [2 12 0]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -1482,7 +1540,7 @@ Stateflow {
     dataType		    "Inherit: Same as Simulink"
   }
   junction {
-    id			    13
+    id			    14
     position		    [23.5747 49.5747 7]
     chart		    2
     linkNode		    [2 0 0]
@@ -1491,7 +1549,7 @@ Stateflow {
     type		    CONNECTIVE_JUNCTION
   }
   transition {
-    id			    14
+    id			    15
     labelString		    "{eML_blk_kernel();}"
     labelPosition	    [32.125 19.875 102.544 14.964]
     fontSize		    12
@@ -1499,7 +1557,7 @@ Stateflow {
       intersection	      [0 0 1 0 23.5747 14.625 0 0]
     }
     dst {
-      id		      13
+      id		      14
       intersection	      [1 0 -1 0 23.5747 42.5747 0 0]
     }
     midPoint		    [23.5747 24.9468]
@@ -1515,13 +1573,13 @@ Stateflow {
     ssIdNumber		    2
   }
   instance {
-    id			    15
+    id			    16
     name		    "MATLAB Function"
     machine		    1
     chart		    2
   }
   target {
-    id			    16
+    id			    17
     name		    "sfun"
     description		    "Default Simulink S-Function Target."
     machine		    1

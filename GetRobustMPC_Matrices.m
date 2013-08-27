@@ -16,6 +16,11 @@ function [H,K,F,G,Nc] = GetRobustMPC_Matrices(sol_mp)
 %   LTI explicit MPC would produce using the MPT toolbox. This is very good
 %   for compatibility issues
 %
+%   Additional note: this function seems messy due to several compatibility
+%   issues between the YALMIP classes and the exact form of the MPT object
+%   classes. However, it is thought that making our robust mpc compatible
+%   with all the code generation of mpt makes sense.
+%
 %   Authors: Kostas Alexis (konstantinos.alexis@mavt.ethz.ch)
 
 nr = length(sol_mp.dynamics);
@@ -42,7 +47,7 @@ Pn_A_plt = polytope(H_A,K_A);
 Pn_b = Polyhedron(H_b,K_b);
 Pn_b.computeVRep();
 Pn_b_plt = polytope(H_b,K_b);
-%%
+
 [Hn{:}] = deal(Pn.A);
 [Kn{:}] = deal(Pn.b);
 
@@ -88,5 +93,5 @@ for i = 1:nr
     F(i,:) = Fi{i};
     G(i,:) = Gi{i};
 end
-%%
+
 end
