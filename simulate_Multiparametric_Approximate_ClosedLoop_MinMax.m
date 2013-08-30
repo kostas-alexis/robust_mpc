@@ -1,4 +1,4 @@
-function [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,Optimizer_x,x_state)
+function [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,Optimizer_x,W_x_bounds,x_state)
 %
 %   Simulate Closed Loop response of Approximate Closed Loop MinMax
 %   solution, computed using Multiparametric methods:
@@ -40,7 +40,7 @@ for i = 1:length(t)
         u_ctrl = 1e-3;
     end
      
-    x_state_k_updt = add_usys_d.matrices.A*x_state_k(:,end) + add_usys_d.matrices.B*double(u_ctrl) + add_usys_d.matrices.E*(-1+2*rand(1));
+    x_state_k_updt = add_usys_d.matrices.A*x_state_k(:,end) + add_usys_d.matrices.B*double(u_ctrl) + add_usys_d.matrices.E*W_x_bounds(2)*(-1+2*rand(1));
     
     x_state_k = [x_state_k x_state_k_updt];
     y(i+1,:) = double(x_state_k(:,i+1));

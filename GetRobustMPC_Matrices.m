@@ -28,8 +28,13 @@ nr = length(sol_mp.dynamics);
 Pn = sol_mp.Pn;
 Pn_orig = Pn;
 Pn_plh = [];
+
+% for kk = 1:length(Pn)
+
+
 for kk = 1:length(Pn)
     [HH,KK] = double(Pn.A);
+    [HH,KK] = double(Pn(kk));
     Pn_plh = [Pn_plh; Polyhedron(HH,KK)];
 end
 
@@ -50,6 +55,9 @@ Pn_b_plt = polytope(H_b,K_b);
 
 [Hn{:}] = deal(Pn.A);
 [Kn{:}] = deal(Pn.b);
+
+[Hn{:}] = deal(Pn_plh.A);
+[Kn{:}] = deal(Pn_plh.b);
 
 Hn_plt = cell(nr,1);
 Kn_plt = cell(nr,1);

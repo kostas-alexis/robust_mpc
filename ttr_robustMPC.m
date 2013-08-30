@@ -18,7 +18,7 @@ add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
 add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
 add_usys_z_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
 
-add_usys_d = add_usys_x_d;
+add_usys_d = add_usys_y_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -67,19 +67,21 @@ W_x_bounds = [-0.5 0.5];
 N = 3; 
 
 %Y_x_Limit_orig = [Inf 1 pi/4 pi];
-Y_x_Limit_orig = [Inf 1 deg2rad(15)];
-
+Y_x_Limit_orig = [Inf 1 deg2rad(15)]; % x 
+Y_x_Limit_orig = [Inf 1 deg2rad(45)]; % y 
+%Y_x_Limit_orig = [Inf 2 5]; % z
 % Y_x_Limit_orig = [Inf 1 1];
 %Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N)
 
 U_x_bounds = [-deg2rad(10) deg2rad(10)]; % x_controller
-U_x_bounds = [-deg2rad(10) deg2rad(10)]; % y_controller
-U_x_bounds = [-5 5]; % z_controller
+U_x_bounds = [-deg2rad(15) deg2rad(15)]; % y_controller
+%U_x_bounds = [-5 5]; % z_controller
 
 % Q = diag([100 .01 .01 .01]);
 % R = 0.001;
 Q = diag([25 .5 .1]); % x_controller
-%Q = diag([10 .2 .1]); % y_controller
+Q = diag([10 .2 .1]); % y_controller
+%Q = diag([11.5 .34 .1]); % y_controller
 %Q = diag([15 1.8 .55]); % z_controller
 
 R = .15; % x_controller
@@ -95,10 +97,12 @@ if(flag_sim == 1)
     x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0]';
     time_sec = 10; % 10 secs
     time_sec = input('how long [s]?');
-    [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,Optimizer_x,x_state);
+    [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,MP_SolutionOut.Optimizer_x,W_x_bounds,x_state);
 end
 %%  Export and Test Real-Time Controller
 
+ExplicitRobustMPC_obj = Assemble_ExplicitRobustMPC_obj(sol_x_mp,add_usys_d,U_x_bounds,Y_x_Limit_orig)
+%%
 %   1. validator:
 sol_x_mp{1}.Ai = cell(1,length(sol_x_mp{1}.Ai));
 sol_x_mp{1}.Bi = sol_x_mp{1}.Fi;
@@ -108,11 +112,35 @@ Optimizer = pwf(sol_x_mp{1},x_state,'general')
 %   derive the matrices for real-time execution
 [H,K,F,G,Nc] = GetRobustMPC_Matrices(sol_x_mp{1});
 Nx = length(add_usys_d.matrices.A);
-
+%%
 %   validate
-xx = [.03 0.05 0.3]';
+clc
+xx = -[0.01151 0.089 0.009]';
 assign(x_state,xx);
-[U,flag_oob] =  OptimalMPCInput(xx,H,K,F,G,N,Nx)
+[U,flag_oob] =  RobustMPCInput(xx,ExplicitRobustMPC_obj.H,ExplicitRobustMPC_obj.K,ExplicitRobustMPC_obj.F,ExplicitRobustMPC_obj.G,ExplicitRobustMPC_obj.Nc,ExplicitRobustMPC_obj.Nx)
+
+[u_ctrl,sol_found, flag_strange] = robustmpc_getInput(sol_x_mp, xx);
 assign(x_state,xx);
 double(Optimizer)
+
+%%
+TTR_RobustMPC.Xdir = ExplicitRobustMPC_obj;
+
+%%
+TTR_RobustMPC.Xdir.Explicit.H = H;
+TTR_RobustMPC.Xdir.Explicit.K = K;
+TTR_RobustMPC.Xdir.Explicit.F = F;
+TTR_RobustMPC.Xdir.Explicit.G = G;
+TTR_RobustMPC.Xdir.Explicit.Nc = Nc;
+TTR_RobustMPC.Xdir.Explicit.Nx = Nx;
+%%
+TTR_RobustMPC.Zdir.Explicit.H = H;
+TTR_RobustMPC.Zdir.Explicit.K = K;
+TTR_RobustMPC.Zdir.Explicit.F = F;
+TTR_RobustMPC.Zdir.Explicit.G = G;
+TTR_RobustMPC.Zdir.Explicit.Nc = Nc;
+TTR_RobustMPC.Zdir.Explicit.Nx = Nx;
+TTR_RobustMPC.Zdir.Explicit.Ts = add_usys_d.Ts;
+
+
 
