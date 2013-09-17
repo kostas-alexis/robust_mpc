@@ -57,11 +57,12 @@ Y_ref = [0 0 0 0]'; % x, y
 [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
 
 %%  Simulate in time
-flag_sim = input('Show Simulation? [0/1]');
+%flag_sim = input('Show Simulation? [0/1]');
+flag_sim = 1
 if(flag_sim == 1)
     x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0 0]'; % x_state_init = [1 0]';
     time_sec = 10; % 10 secs
-    time_sec = input('how long [s]?');
+  %  time_sec = input('how long [s]?');
     [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,MP_SolutionOut.Optimizer_x,W_x_bounds,x_state);
 end
 %%  Export and Test Real-Time Controller
