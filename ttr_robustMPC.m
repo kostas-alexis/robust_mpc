@@ -18,7 +18,7 @@ add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
 add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
 add_usys_z_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
 
-add_usys_d = add_usys_y_d;
+add_usys_d = add_usys_z_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -63,26 +63,26 @@ plot(x_state_k(2,1:end),'r')
 
 x_state = sdpvar(length(add_usys_d.matrices.A),1);
 norm_type = 1;
-W_x_bounds = [-0.5 0.5];
+W_x_bounds = [-0.25 0.25];
 N = 3; 
 
 %Y_x_Limit_orig = [Inf 1 pi/4 pi];
 Y_x_Limit_orig = [Inf 1 deg2rad(15)]; % x 
 Y_x_Limit_orig = [Inf 1 deg2rad(45)]; % y 
-%Y_x_Limit_orig = [Inf 2 5]; % z
+Y_x_Limit_orig = [Inf 2 5]; % z
 % Y_x_Limit_orig = [Inf 1 1];
 %Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N)
 
 U_x_bounds = [-deg2rad(10) deg2rad(10)]; % x_controller
 U_x_bounds = [-deg2rad(15) deg2rad(15)]; % y_controller
-%U_x_bounds = [-5 5]; % z_controller
+U_x_bounds = [-5 5]; % z_controller
 
 % Q = diag([100 .01 .01 .01]);
 % R = 0.001;
 Q = diag([25 .5 .1]); % x_controller
-Q = diag([10 .2 .1]); % y_controller
+Q = diag([20 .2 .05]); % y_controller
 %Q = diag([11.5 .34 .1]); % y_controller
-%Q = diag([15 1.8 .55]); % z_controller
+Q = diag([15 1.8 .55]); % z_controller
 
 R = .15; % x_controller
 %R = .15; % y_controller
@@ -125,6 +125,8 @@ double(Optimizer)
 
 %%
 TTR_RobustMPC.Xdir = ExplicitRobustMPC_obj;
+TTR_RobustMPC.Ydir = ExplicitRobustMPC_obj; 
+TTR_RobustMPC.Zdir = ExplicitRobustMPC_obj; 
 
 %%
 TTR_RobustMPC.Xdir.Explicit.H = H;

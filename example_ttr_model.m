@@ -34,7 +34,7 @@ d_RL_x = 0.0250;
 d_T_x = 0.355;
 
 dmp_x = 0.1;
-dmp_y = 0.1;
+dmp_y = 0.5;
 dmp_z = 0.1;
 
 % X = [x;x_dot;delta_g]
