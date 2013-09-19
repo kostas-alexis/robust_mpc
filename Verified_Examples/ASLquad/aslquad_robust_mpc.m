@@ -2,7 +2,7 @@
 %
 %   Authors: Kostas Alexis (konstantinos.alexis@mavt.ethz.ch)
 
-run Init_RobustMPC;
+% run Init_RobustMPC;
 
 %%  Load TTR Parameters
 Ts = 0.16;
@@ -12,13 +12,13 @@ run example_ASLquad_model
 E_x = 0.1*B_x;
 E_y = 0.1*B_y;
 % E_z = 0.1*B_z;
-E_x = [0 .75 0 0.05]'; E_y = [0 .75 0 0]';E_z = [0 .15]';
+E_x = [0 .75 0 0.05]'; E_y = [0 .75 0 0.05]';E_z = [0 .15]';
 
 add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
 add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
 add_usys_z_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
 
-add_usys_d = add_usys_x_d;
+add_usys_d = add_usys_y_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -29,25 +29,25 @@ u = 10*sin(t);
 x_state = sdpvar(length(add_usys_d.matrices.A),1);
 norm_type = 1
 W_x_bounds = [-0.2 0.2];
-N = 3; 
+W_x_bounds = [-0.15 0.15];
+
+N = 2; 
 
 Y_x_Limit_orig = [Inf 1 deg2rad(35) deg2rad(135)]; % x 
-%Y_x_Limit_orig = [Inf 10]; % z 
+% Y_x_Limit_orig = [Inf 10]; % z 
 
 U_x_bounds = [-deg2rad(35) deg2rad(35)]; % z_controller
-%U_x_bounds = [-10 10]; % z_controller
+% U_x_bounds = [-10 10]; % z_controller
 
 %   norm_type = 1;
 Q = 0.8*diag([22.5 5 .1 .01]); % x_controller
-%Q = diag([21 2]); % z_controller
-% %   norm_type = inf
-% Q = diag([22 1.85 .1]); % x_controller
-% % Q = diag([21 2.5 .1]); % y_controller
-% % Q = diag([40 8.8 1.05]); % z_controller
-% % Q = diag([38 9.8 1.05]); % z_controller
+Q = 1*diag([25 2 .1 .01]); % y_controller
+Q = 10*diag([24 2.5 .1 .01]); % y_controller
+% Q = diag([21 2]); % z_controller
 
 
 R = .15; % x_controller
+R = .2; % y_controller
 % R = .35; % z_controller
 
 
@@ -60,7 +60,7 @@ Y_ref = [0 0 0 0]'; % x, y
 %flag_sim = input('Show Simulation? [0/1]');
 flag_sim = 1
 if(flag_sim == 1)
-    x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0 0]'; % x_state_init = [1 0]';
+    x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0 0]';  % x_state_init = [1 0]';
     time_sec = 10; % 10 secs
   %  time_sec = input('how long [s]?');
     [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,MP_SolutionOut.Optimizer_x,W_x_bounds,x_state);
@@ -82,7 +82,7 @@ Nx = length(add_usys_d.matrices.A);
 %   validate
 clc
 xx = [0.08151 0.089 0.0009 0]';
-xx = -2*[0.08151 0.089]';
+% xx = -2*[0.08151 0.089]';
 assign(x_state,xx);
 [U,flag_oob] =  RobustMPCInput(xx,ExplicitRobustMPC_obj.H,ExplicitRobustMPC_obj.K,ExplicitRobustMPC_obj.F,ExplicitRobustMPC_obj.G,ExplicitRobustMPC_obj.Nc,ExplicitRobustMPC_obj.Nx)
 
@@ -91,5 +91,5 @@ assign(x_state,xx);
 double(Optimizer)
 
 %%
-
+ASLquad_RobustMPC.Ydir = ExplicitRobustMPC_obj
 ASLquad_RobustMPC.Zdir = ExplicitRobustMPC_obj
