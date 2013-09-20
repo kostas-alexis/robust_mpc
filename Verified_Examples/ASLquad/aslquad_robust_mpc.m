@@ -6,19 +6,20 @@
 
 %%  Load TTR Parameters
 Ts = 0.16;
+% Ts = 0.08;
 run example_ASLquad_model
 
 %%  Define Additive Uncertain Model
 E_x = 0.1*B_x;
 E_y = 0.1*B_y;
 % E_z = 0.1*B_z;
-E_x = [0 .75 0 0.05]'; E_y = [0 .75 0 0.05]';E_z = [0 .15]';
+E_x = [0 .75 0 0.00]'; E_y = [0 .75 0 0.00]';E_z = [0 .15]';
 
 add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
 add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
 add_usys_z_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
 
-add_usys_d = add_usys_y_d;
+add_usys_d = add_usys_x_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
@@ -27,27 +28,33 @@ u = 10*sin(t);
 %%  MultiParametric Approximate Closed Loop MinMax Solution
 
 x_state = sdpvar(length(add_usys_d.matrices.A),1);
-norm_type = 1
+norm_type = Inf
 W_x_bounds = [-0.2 0.2];
-W_x_bounds = [-0.15 0.15];
+W_x_bounds = [-0.05 0.05];
 
-N = 2; 
+N = 3; 
 
-Y_x_Limit_orig = [Inf 1 deg2rad(35) deg2rad(135)]; % x 
+Y_x_Limit_orig = [Inf 2 deg2rad(45) deg2rad(360)]; % x 
 % Y_x_Limit_orig = [Inf 10]; % z 
 
-U_x_bounds = [-deg2rad(35) deg2rad(35)]; % z_controller
-% U_x_bounds = [-10 10]; % z_controller
+U_x_bounds = [-deg2rad(30) deg2rad(30)]; % xy_controller
+% U_x_bounds = [-5 5]; % z_controller
 
 %   norm_type = 1;
 Q = 0.8*diag([22.5 5 .1 .01]); % x_controller
-Q = 1*diag([25 2 .1 .01]); % y_controller
-Q = 10*diag([24 2.5 .1 .01]); % y_controller
+Q = .65*diag([71 12 1.5 0.3]); % x_controller
+Q = .65*diag([71 15 1.5 0.3]); % x_controller
+Q = .65*diag([71 17.5 1.65 0.55]); % x_controller
+% Q = 1*diag([25 2 .1 .01]); % y_controller
+% Q = 1*diag([25 2 .1 .01]); % y_controller
+% Q = 10*diag([24 2.5 .1 .01]); % y_controller
+% Q = .65*diag([71 17.5 1.65 0.55]); % y_controller
 % Q = diag([21 2]); % z_controller
 
 
-R = .15; % x_controller
-R = .2; % y_controller
+R = .15; R = .165; % x_controller
+% R = .2; % y_controller
+%  R = .15; % y_controller
 % R = .35; % z_controller
 
 
@@ -56,7 +63,7 @@ Y_ref = [0 0 0 0]'; % x, y
 
 [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
 
-%%  Simulate in time
+%  Simulate in time
 %flag_sim = input('Show Simulation? [0/1]');
 flag_sim = 1
 if(flag_sim == 1)
@@ -91,5 +98,6 @@ assign(x_state,xx);
 double(Optimizer)
 
 %%
+ASLquad_RobustMPC.Xdir = ExplicitRobustMPC_obj;
 ASLquad_RobustMPC.Ydir = ExplicitRobustMPC_obj
 ASLquad_RobustMPC.Zdir = ExplicitRobustMPC_obj
