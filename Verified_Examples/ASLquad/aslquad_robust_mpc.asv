@@ -7,6 +7,8 @@
 %%  Load TTR Parameters
 Ts = 0.16;
 Ts = 0.08;
+Ts = 0.04;
+
 run example_ASLquad_model
 
 %%  Define Additive Uncertain Model
@@ -19,13 +21,14 @@ add_usys_x_d = add_uss(A_x,B_x,C_x,D_x,E_x,Ts)
 add_usys_y_d = add_uss(A_y,B_y,C_y,D_y,E_y,Ts)
 add_usys_z_d = add_uss(A_z,B_z,C_z,D_z,E_z,Ts)
 
-add_usys_d = add_usys_y_d;
+add_usys_d = add_usys_x_d;
 
 t = 0:0.01:100;
 u = 10*sin(t);
 [y,t] = lsim_addusys(add_usys_d,[-0.5 0.5],u,t);
 
 %%  MultiParametric Approximate Closed Loop MinMax Solution
+close all;
 
 x_state = sdpvar(length(add_usys_d.matrices.A),1);
 norm_type = Inf
@@ -45,11 +48,13 @@ Q = 0.8*diag([22.5 5 .1 .01]); % x_controller
 Q = .65*diag([71 12 1.5 0.3]); % x_controller
 Q = .65*diag([71 15 1.5 0.3]); % x_controller
 Q = .65*diag([71 17.5 1.65 0.55]); % x_controller
-Q = .65*diag([71 7.5 1.65 0.55]); % x_controller
+Q = .65*diag([71 7.5 1.65 0.55]); % x_controller % - this one
+Q = 10*diag([132 18.5 1.05 0.2]); % x_controller % - this one
+% Q = .65*diag([90 17.5 1.65 0.55]); % x_controller % Ts = 0.06
 % Q = 1*diag([25 2 .1 .01]); % y_controller
 % Q = 1*diag([25 2 .1 .01]); % y_controller
-Q = 10*diag([24 2.5 .1 .01]); % y_controller
-Q = 10*diag([71 7.5 1.65 0.55]); % y_controller
+% Q = 10*diag([24 2.5 .1 .01]); % y_controller
+% Q = 10*diag([71 7.5 1.65 0.55]); % y_controller % - this one
 % Q = .65*diag([71 17.5 1.65 0.55]); % y_controller
 % Q = diag([21 2]); % z_controller
 
@@ -69,7 +74,7 @@ Y_ref = [0 0 0 0]'; % x, y
 %flag_sim = input('Show Simulation? [0/1]');
 flag_sim = 1
 if(flag_sim == 1)
-    x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0 0]';  % x_state_init = [1 0]';
+    x_state_init = zeros(length(x_state),1); x_state_init = [1 0 0 0]'; %  x_state_init = [1 0]';
     time_sec = 10; % 10 secs
   %  time_sec = input('how long [s]?');
     [y,u_ctrl_seq,t] = simulate_Multiparametric_Approximate_ClosedLoop_MinMax(add_usys_d,sol_x_mp,x_state_init,time_sec,MP_SolutionOut.Optimizer_x,W_x_bounds,x_state);
