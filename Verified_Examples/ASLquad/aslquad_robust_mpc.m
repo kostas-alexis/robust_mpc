@@ -34,8 +34,9 @@ x_state = sdpvar(length(add_usys_d.matrices.A),1);
 norm_type = Inf
 W_x_bounds = [-0.2 0.2];
 W_x_bounds = [-0.05 0.05];
+W_x_bounds = 0*[-0.05 0.05];
 
-N = 4; 
+N = 3; 
 
 Y_x_Limit_orig = [Inf 2 deg2rad(45) deg2rad(360)]; % x 
 % Y_x_Limit_orig = [Inf 10]; % z 
