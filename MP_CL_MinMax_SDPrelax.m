@@ -1,8 +1,8 @@
-function [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
+function [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,Q_L,R_L,norm_type)
 %   Multiparametric Approximate Closed-Loop MinMaxt
 %
 %   Syntax:
-%   [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
+%   [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,Q_L,R_L,norm_type)
 %   Inputs:
 %   add_usys_d  : the system of additive uncertainty
 %   x_state     : x_state sdp var
@@ -12,6 +12,8 @@ function [sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_u
 %   Q           : Q Penalizing matrix
 %   R           : R Penalizing matrix
 %   N           : Prediction horizon
+%   Q_L         : Q Penalizing matrix on the Feedback Predictions
+%   R_L         : R Penalizing matrix on the Feedback Predictions
 %   norm_type   : norm type
 %
 %   Outputs:
@@ -35,7 +37,8 @@ x_state = sdpvar(length(x_state),1);
 V_x = sdpvar(N,1);
 L_x = sdpvar(N,N,'full').*(tril(ones(N))-eye(N));
 
-U_x = L_x*W_x + V_x;
+U_x = Q_L*(L_x*W_x) + R_L*(V_x);
+
 
 %   Stack output constraints
 Y_x_Limit = expand_Yconstraints(Y_x_Limit_orig,N)

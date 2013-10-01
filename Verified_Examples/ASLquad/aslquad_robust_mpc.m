@@ -36,7 +36,7 @@ W_x_bounds = [-0.2 0.2];
 W_x_bounds = [-0.05 0.05];
 W_x_bounds = 0*[-0.05 0.05];
 
-N = 3; 
+N = 2; 
 
 Y_x_Limit_orig = [Inf 2 deg2rad(45) deg2rad(360)]; % x 
 % Y_x_Limit_orig = [Inf 10]; % z 
@@ -69,7 +69,9 @@ R = .15; R = .165; % x_controller
 Y_ref = [0 0 0 0]'; % x, y
 % Y_ref = [0 0]'; % z
 
-[sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,norm_type)
+Q_L = 1;
+R_L = 10;
+[sol_x_mp,ValueFunction_x,MP_SolutionOut] = MP_CL_MinMax_SDPrelax(add_usys_d, x_state, Y_ref, Y_x_Limit_orig,U_x_bounds,W_x_bounds,Q,R,N,Q_L,R_L,norm_type)
 
 %  Simulate in time
 %flag_sim = input('Show Simulation? [0/1]');
