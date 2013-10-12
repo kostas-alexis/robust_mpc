@@ -15,7 +15,7 @@ z_ref = traj_FG.X_ref_z(1,:);
 %%
 
 plot3(y,x,z); hold on;
-plot3(.8*y_ref,x_ref+1.92,z_ref+1,'r')
+plot3(y_ref,x_ref+1.92,z_ref+1,'r')
 %%
 PLOT_DATASET.time = time_vec;
 PLOT_DATASET.position.x.resp = x;
